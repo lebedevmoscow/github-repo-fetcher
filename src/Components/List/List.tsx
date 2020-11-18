@@ -13,7 +13,7 @@ import Bio from './../Bio'
 import { formatDate } from '../../utils'
 import { IBioReducer } from '../../reducers/bio'
 
-import {RouteComponentProps} from 'react-router-dom'
+import {RouteComponentProps, useHistory} from 'react-router-dom'
 import { loadUserBio } from '../../actions/bio'
 
 interface IParams {
@@ -23,6 +23,8 @@ interface IParams {
 
 
 const List = (props: RouteComponentProps<IParams>) => {
+
+    const history = useHistory()
 
     // Array of pages, looks like [a, b, c], where a, b and c - certain number of page
     // for example [1, 2, 3, 4, 5, 127]
@@ -55,6 +57,7 @@ const List = (props: RouteComponentProps<IParams>) => {
 
     // If user click on page, we'll load new content    
     const onLoadMoreHandler = (username: string, page: number) => {
+        history.push(`/${bio.username}/${list.currentPage+1}`)
         return dispatch(loadUserRepos(username, page))
     }
 
