@@ -13,6 +13,7 @@
 -   На front-end используется React + Redux + Thunk(ввиду отсутсвия знаний о redux-saga решил воспользоваться redux-thunk для side-эффектов)
 -   Адаптивная верстка с использованием Flexbox + Sass
 -   Готовые UI компоненты от Material UI
+-   Поддержка динамического URL пути и обработка ошибок
 -   Комментирование кода с помощью JSDOC
 
 ![alt text](https://i.ibb.co/NVrn5xJ/1.png 'Logo')
