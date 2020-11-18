@@ -1,22 +1,17 @@
 import {Reducer,combineReducers} from 'redux'
+import {IActionObject} from './../interfaces/IReducers'
 
 // Reducers
-import test from './test'
+import list, {IListReducer} from './list'
+import bio, { IBioReducer } from './bio'
 
-// Interfaces
-import {ITestReducer} from './test'
-
-interface IActionObject<P = null> {
-    type: String,
-    payload?: P
-}
-
-interface IGlobalStore {
-    test: ITestReducer
+export interface IGlobalStore {
+    list: IListReducer, 
+    bio: IBioReducer
 }
 
 const rootReducer: Reducer<IGlobalStore, IActionObject> = combineReducers({
-    test
+    list, bio
 })
 
 export default rootReducer
