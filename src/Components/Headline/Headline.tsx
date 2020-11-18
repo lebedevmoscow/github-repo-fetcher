@@ -13,7 +13,7 @@ export interface IParams {
 }
 
 
-const Headline = (props: RouteComponentProps<IParams>) => {
+const Headline = () => {
 	return (
 		<div className='headline'>
 			<div className="headline__copyright">
@@ -33,7 +33,7 @@ const Headline = (props: RouteComponentProps<IParams>) => {
 					<a href="https://hh.ru/resume/70a54c5fff085b2d5e0039ed1f703559734a73">click me</a>
 				</div>
 			</div>
-			<Searchbar {...props}/>
+			<Searchbar />
 		</div>
 	)
 }

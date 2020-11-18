@@ -13,11 +13,34 @@ import Bio from './../Bio'
 import { formatDate } from '../../utils'
 import { IBioReducer } from '../../reducers/bio'
 
-const List = () => {
+import {RouteComponentProps} from 'react-router-dom'
+import { loadUserBio } from '../../actions/bio'
+
+interface IParams {
+    company: string,
+    page: string
+}
+
+
+const List = (props: RouteComponentProps<IParams>) => {
 
     // Array of pages, looks like [a, b, c], where a, b and c - certain number of page
     // for example [1, 2, 3, 4, 5, 127]
     const [pagination, setPagination] = useState<Array<number>>([])
+
+    const dispatch = useDispatch()
+    
+    // If in browser adress bar has been pass the link
+    useEffect(() => {
+        // Then load the data
+        const fetchData = () => {
+            if (props.match.params.company || props.match.params.page) {
+                dispatch(loadUserBio(props.match.params.company))
+                dispatch(loadUserRepos(props.match.params.company, +props.match.params.page))
+            }
+        }
+        fetchData()
+    }, [])
 
     // Getting state
     const listSelector = ((state: IGlobalStore) => state.list)
@@ -25,12 +48,14 @@ const List = () => {
     const list: IListReducer = useSelector(listSelector)
     const bio: IBioReducer = useSelector(bioSelector)
 
-
-    const dispatch = useDispatch()
-
     let pages: number
     if (bio.data) {
-        pages = Math.ceil(bio.data.public_repos / 15)
+        pages = Math.ceil(bio.data.public_repos / 12)
+    }
+
+    // If user click on page, we'll load new content    
+    const onLoadMoreHandler = (username: string, page: number) => {
+        return dispatch(loadUserRepos(username, page))
     }
 
     // Calculate pagination system
@@ -71,11 +96,6 @@ const List = () => {
         // Set new system pagination
         setPagination(newPagination)
     }
-    
-    // If user click on page, we'll load new content    
-    const onLoadMoreHandler = (username: string, page: number) => {
-        return dispatch(loadUserRepos(username, page))
-    }
 
     // When gets repos data, calculate the pagination system
     useEffect(() => {
@@ -83,6 +103,7 @@ const List = () => {
             calculatePagination()
         }
     }, [list.repos, bio.data])
+
 
     // If loading, render spinner
     if (list.loading || !list.repos) {
@@ -94,6 +115,10 @@ const List = () => {
         return <h1 className="list__error">This company does not exist :(</h1>
     }
 
+    // If URL adress that has been passed wrong
+    if (+props.match.params.page > pages!) {
+        return <h1 className="list__error">This company does not have that many pages :(</h1>
+    }
 
     return (
         <div className="list">
@@ -102,7 +127,6 @@ const List = () => {
             {console.log('list', list)}
             {bio.data && <h4 className="list__total">Total: {bio.data ? bio.data.public_repos : null} </h4>}
             <div className="list__repos">
-                {/* Render each repository as a Card component */}
                 {list.repos.map((repo, i) => {
                     return <Card
                         className="list__repo"
