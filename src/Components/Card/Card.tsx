@@ -26,20 +26,24 @@ const Card = ({
     description,
     language,
     stargazers_count,
-    created_at
+    created_at,
+    className
 }: {
     repoName: string
     urlRepo: string,
-    watchers_count: Number,
-    forks: Number,
+    watchers_count: number,
+    forks: number,
     description: string,
     language: string,
-    stargazers_count: Number,
-    created_at: string
+    stargazers_count: number,
+    created_at: string,
+    className: string
 }) => {
 
+    let display
+    if (window.innerWidth < 700) display = 'flex'; else display = 'block'
     return (
-        <a href={urlRepo} className="card">
+        <a href={urlRepo} className="card" style={{display}}>
             <div className="card__name"><strong>{repoName}</strong></div>
             <div className="card__desc">
                 <p>{description ? description : 'No description'}</p>

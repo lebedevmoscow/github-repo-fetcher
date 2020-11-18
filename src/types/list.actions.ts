@@ -9,7 +9,7 @@ export interface ILoadUserRepos {
 
 export interface ILoadUserReposSuccess {
 	type: typeof LOAD_USER_REPOS_SUCCESS;
-	payload: Array<Object>;
+	payload: Object;
 }
 
 export interface ILoadUserReposError {
