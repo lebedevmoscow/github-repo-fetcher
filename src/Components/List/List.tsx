@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, ReactPropTypes} from 'react'
 import './List.sass'
 
 import {useSelector, useDispatch} from 'react-redux'
@@ -28,10 +28,61 @@ const List = () => {
 
     const dispatch = useDispatch()
 
+    let pages: number
+    if (bio.data) {
+        pages = Math.ceil(bio.data.public_repos / 15)
+    }
+
+    // Calculate pagination system
+    const calculatePagination = () => {
+        const newPagination = []
+
+        // Current page
+        const current = list.currentPage
+
+        // If its first page, render basic pagination
+        if (current === 1) {
+            for (let i = 1; i < 6; i++) newPagination.push(i)
+            newPagination.push(pages)
+        }
+
+        // If its second page
+        if (current === 2 ) {
+            newPagination.push(1)
+            for (let i = 2; i < 7; i++) newPagination.push(i)
+        }
+
+        if (current >= 3 && current !== pages) {
+            newPagination.push(1)
+            newPagination.push(current - 1)
+            newPagination.push(current)
+            for (let i = current + 1; i <= pages; i++) {
+                if (i < pages && i < current + 3) newPagination.push(i)
+            }
+            newPagination.push(pages)
+        }
+
+        // Handling last case
+        if (current === pages) {
+            for (let i = pages - 4; i <= pages; i++) newPagination.push(i)
+
+        }
+    
+        // Set new system pagination
+        setPagination(newPagination)
+    }
+    
+    // If user click on page, we'll load new content    
+    const onLoadMoreHandler = (username: string, page: number) => {
+        return dispatch(loadUserRepos(username, page))
+    }
+
     // When gets repos data, calculate the pagination system
     useEffect(() => {
-        calculatePagination()
-    }, [list.repos])
+        if (list.repos && bio.data) {
+            calculatePagination()
+        }
+    }, [list.repos, bio.data])
 
     // If loading, render spinner
     if (list.loading || !list.repos) {
@@ -44,67 +95,11 @@ const List = () => {
     }
 
 
-    // Calculate pagination system
-    const calculatePagination = () => {
-        const newPagination = []
-
-        // Current page
-        const current = list.currentPage
-
-        if (pages) {
-            // If its first page, render basic pagination
-            if (current === 1) {
-                for (let i = 1; i < 6; i++) {
-                    newPagination.push(i)
-                }
-                newPagination.push(pages)
-            }
-
-            // If its second page
-            if (current === 2 ) {
-                newPagination.push(1)
-                for (let i = 2; i < 7; i++) {
-                    newPagination.push(i)
-                }
-            }
-
-            if (current >= 3 && current !== pages) {
-                newPagination.push(current - 2)
-                newPagination.push(current - 1)
-                newPagination.push(current)
-                for (let i = current + 1; i <= pages; i++) {
-                    if (i < pages && i < current + 3) {
-                        newPagination.push(i)
-                    }
-                }
-                newPagination.push(pages)
-            }
-
-            // Handling last case
-            if (current === pages) {
-                for (let i = pages - 4; i <= pages; i++) {
-                    newPagination.push(i)
-                }
-            }
-        }
-        
-        // Set new system pagination
-        setPagination(newPagination)
-    }
-
-    let pages: number
-    if (bio.data) {
-        pages = Math.ceil(bio.data.public_repos / 15)
-    }
-
-    // If user click on page, we'll load new content    
-    const onLoadMoreHandler = (username: string, page: number) => {
-        return dispatch(loadUserRepos(username, page))
-    }
-
     return (
         <div className="list">
             <Bio />
+            {console.log('bio', bio)}
+            {console.log('list', list)}
             {bio.data && <h4 className="list__total">Total: {bio.data ? bio.data.public_repos : null} </h4>}
             <div className="list__repos">
                 {/* Render each repository as a Card component */}
@@ -125,17 +120,16 @@ const List = () => {
             </div>
             {bio.data && <div className="list__pagination">
                 <ul>
-                    {pagination.map((p) => {
+                    {pagination.map((p, i) => {
                         let classes
 
                         if (p === list.currentPage) {
-                            console.log('====P', p)
                             classes = 'list__currentpage'
                         }
 
                         return <li
                             onClick={() => onLoadMoreHandler(bio.username as string, p)}  
-                            key={p}
+                            key={i+1}
                             className={classes}
                             >
                                 {p}

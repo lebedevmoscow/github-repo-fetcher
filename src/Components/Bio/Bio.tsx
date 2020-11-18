@@ -8,6 +8,7 @@ import Loader from '../Loader'
 
 import {formatDate} from './../../utils'
 
+
 const Bio = () => {
 
     // Getting state

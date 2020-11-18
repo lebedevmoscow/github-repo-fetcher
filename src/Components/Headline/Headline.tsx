@@ -1,5 +1,5 @@
 import React from 'react'
-import {Link} from 'react-router-dom'
+import {RouteComponentProps} from 'react-router-dom'
 
 // Styles
 import './Headline.sass'
@@ -7,7 +7,13 @@ import './Headline.sass'
 // React components
 import Searchbar from './../Searchbar'
 
-const Headline = () => {
+export interface IParams {
+    company: undefined | string,
+    page: undefined | string
+}
+
+
+const Headline = (props: RouteComponentProps<IParams>) => {
 	return (
 		<div className='headline'>
 			<div className="headline__copyright">
@@ -27,7 +33,7 @@ const Headline = () => {
 					<a href="https://hh.ru/resume/70a54c5fff085b2d5e0039ed1f703559734a73">click me</a>
 				</div>
 			</div>
-			<Searchbar />
+			<Searchbar {...props}/>
 		</div>
 	)
 }
